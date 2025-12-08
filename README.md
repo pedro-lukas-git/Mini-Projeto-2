@@ -38,6 +38,6 @@ https://github.com/pedro-lukas-git/Mini-Projeto-2
 - Implementar contarTerrenosLivres
 
 ## Paulo Vitor
-- Implementar valotTotalTerrenos
+- Implementar valorTotalTerrenos
 - Implementar salvaTerrenos
 - Implementar carregarTerrenos
