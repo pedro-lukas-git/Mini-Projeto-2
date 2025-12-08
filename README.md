@@ -18,9 +18,8 @@ https://github.com/pedro-lukas-git/Mini-Projeto-2
 1. Compile o código:
    gcc main.c -o main
 2. Execute 
-    ./main
-- (Na primeira execução o arquivo terrenos.txt ainda não estará criado, o programa o criará automaticamente)
-
+    ./main terrenos.txt
+   
 # Distribuição de Tarefas do Projeto
 
 ## Pedro Lukas
