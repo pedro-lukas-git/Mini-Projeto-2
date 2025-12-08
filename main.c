@@ -30,6 +30,84 @@ void inicializarVetor(Terreno ** terrenos) {
     int i;
     for (i = 0; i < MAX_TERRENOS; i++) terrenos[i] = NULL;
 }
+void editarTerreno(Terreno **terrenos, int id) {
+    int i;
+    for (i = 0; i < MAX_TERRENOS; i++) {
+        if (terrenos[i] != NULL && id == terrenos[i]->id) {
+            printf("\n--- EDITAR TERRENO ---\n");
+            printf("Novo nome: ");
+            getchar();
+            fgets(terrenos[i]->dono.nome, 100, stdin);
+            terrenos[i]->dono.nome[strcspn(terrenos[i]->dono.nome, "\n")] = 0;
+
+
+            printf("Novo telefone: ");
+            fgets(terrenos[i]->dono.telefone, 20, stdin);
+            terrenos[i]->dono.telefone[strcspn(terrenos[i]->dono.telefone, "\n")] = 0;
+
+
+            printf("Nova largura: ");
+            scanf("%f", &terrenos[i]->largura);
+
+
+            printf("Novo comprimento: ");
+            scanf("%f", &terrenos[i]->comprimento);
+
+
+            terrenos[i]->area = terrenos[i]->largura * terrenos[i]->comprimento;
+
+
+            printf("Novo preco por m2: ");
+            scanf("%f", &terrenos[i]->preco_m2);
+
+
+            terrenos[i]->area = terrenos[i]->largura * terrenos[i]->comprimento;
+
+
+            printf("Terreno atualizado.\n");
+
+
+            return;
+        }
+    }
+    printf("Terreno com ID %d nao encontrado!\n", id);
+}
+
+
+double calcularValorTerreno(Terreno ** terrenos, int id) {
+    int i;
+    double total;
+    for (i = 0; i < MAX_TERRENOS; i++) {
+        if (terrenos[i] != NULL && id == terrenos[i]->id) {
+            total = terrenos[i]->area * terrenos[i]->preco_m2;
+            return total;
+        }
+    }
+    return -1;
+}
+
+
+int contarTerrenosOcupados(Terreno ** terrenos) {
+    int total = 0;
+    int i;
+    for (i = 0; i < MAX_TERRENOS; i++) {
+        if (terrenos[i] != NULL) total++;
+    }
+    return total;
+}
+
+
+int contarTerrenosLivres(Terreno ** terrenos) {
+    int total = 0;
+    int i;
+    for (i = 0; i < MAX_TERRENOS; i++) {
+        if (terrenos[i] == NULL) total++;
+    }
+
+
+    return total;
+}
+
 
 int main()
 {
