@@ -25,6 +25,8 @@ typedef struct {
 typedef struct {
     int id;
     float largura, comprimento, area, preco_m2;
+
+
     Pessoa dono;
     Data data_compra;
 } Terreno;
@@ -45,6 +47,7 @@ void criarTerreno(Terreno ** terrenos) {
             break;
         }
     }
+   
     if (pos_vazio == -1) {
         printf("Nao ha espaco para novos terrenos.\n");
         return;
@@ -226,11 +229,123 @@ int contarTerrenosLivres(Terreno ** terrenos) {
 }
 
 
-int main()
-{
+double calcularValorTotal(Terreno ** terrenos) {
+    double total = 0;
+    int i;
+    for (i = 0; i < MAX_TERRENOS; i++) {
+        if (terrenos[i] != NULL) {
+            total += terrenos[i]->area * terrenos[i]->preco_m2;
+        }
+    }
+    return total;
+}
+
+
+void salvarTerrenos(Terreno ** terrenos, const char * nomeArquivo) {
+    FILE * arq = fopen(nomeArquivo, "w");
+    if (arq) {
+        int i;
+        fprintf(arq, "%d\n", contarTerrenosOcupados(terrenos));
+        for (i = 0; i < MAX_TERRENOS; i++) {
+            if (terrenos[i] != NULL) {
+                // id
+                fprintf(arq, "%d\n", terrenos[i]->id);
+               
+                // dados dono
+                fprintf(arq, "%s\n", terrenos[i]->dono.nome);
+                fprintf(arq, "%s\n", terrenos[i]->dono.cpf);
+                fprintf(arq, "%d %d %d\n", terrenos[i]->dono.data_nascimento.dia, terrenos[i]->dono.data_nascimento.mes, terrenos[i]->dono.data_nascimento.ano);
+                fprintf(arq, "%s\n", terrenos[i]->dono.telefone);
+
+
+                // dados data de compra
+                fprintf(arq, "%d %d %d\n", terrenos[i]->data_compra.dia, terrenos[i]->data_compra.mes, terrenos[i]->data_compra.ano);
+
+
+                // dados medidas
+                fprintf(arq, "%f\n", terrenos[i]->largura);
+                fprintf(arq, "%f\n", terrenos[i]->comprimento);
+                fprintf(arq, "%f\n", terrenos[i]->area);
+                fprintf(arq, "%f\n", terrenos[i]->preco_m2);
+            }
+        }
+        fclose(arq);
+        printf("Dadods salvos!\n");
+    } else {
+        printf("Erro ao abrir o arquivo!\n");
+    }
+}
+
+
+void carregarTerrenos(Terreno ** terrenos, const char * nomeArquivo) {
+    FILE * arq = fopen(nomeArquivo, "r");
+
+
+    if (!arq) {
+        printf("Arquivo nao encontrado. Nada sera carregado.\n");
+        return;
+    }
+
+
+    int total_terrenos;
+    fscanf(arq, "%d", &total_terrenos);
+
+
+    int i, j;
+    for (i = 0; i < total_terrenos; i++) {
+        Terreno * novo_t = malloc(sizeof(Terreno));
+
+
+        // id
+        fscanf(arq, "%d", &novo_t->id);
+       
+        // dados dono
+        fscanf(arq, " %[^\n]", novo_t->dono.nome);
+        fscanf(arq, " %[^\n]", novo_t->dono.cpf);
+        fscanf(arq, "%d %d %d", &novo_t->dono.data_nascimento.dia, &novo_t->dono.data_nascimento.mes, &novo_t->dono.data_nascimento.ano);
+        fscanf(arq, " %[^\n]", novo_t->dono.telefone);
+
+
+        // dados data compra
+        fscanf(arq, "%d %d %d", &novo_t->data_compra.dia, &novo_t->data_compra.mes, &novo_t->data_compra.ano);
+
+
+        // dados medidas
+        fscanf(arq, "%f", &novo_t->largura);
+        fscanf(arq, "%f", &novo_t->comprimento);
+        fscanf(arq, "%f", &novo_t->area);
+        fscanf(arq, "%f", &novo_t->preco_m2);
+
+
+        // procurando pelo primeiro espaço vazio para cadastrar
+        for (j = 0; j < MAX_TERRENOS; j++) {
+            if(terrenos[j] == NULL) {
+                terrenos[j] = novo_t;
+                break;
+            }
+        }
+    }
+
+
+    fclose(arq);
+}
+
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("> Necessario uso de arquivo.txt\nUso: %s terrenos.txt", argv[0]);
+        return 1;
+    }
+
+
+
+
     Terreno * terrenos[MAX_TERRENOS];
     inicializarVetor(terrenos);
+    carregarTerrenos(terrenos, argv[1]);
     int opcao;
+
+
     // Menu do programa
     while (1) {
         printf("=============================================\n");
@@ -284,10 +399,13 @@ int main()
             printf("Livres: %d\n", contarTerrenosLivres(terrenos));
             break;
         case 8:
+            printf("Valor total: R$ %.2lf\n", calcularValorTotal(terrenos));
             break;
         case 9:
+            salvarTerrenos(terrenos, "terrenos.txt");
             break;
         case 0:    
+            salvarTerrenos(terrenos, "terrenos.txt");
             printf("Saindo...\n");
             return 0;
         default:
