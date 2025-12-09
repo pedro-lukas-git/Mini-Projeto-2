@@ -287,6 +287,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+
     Terreno * terrenos[MAX_TERRENOS];
     inicializarVetor(terrenos);
     carregarTerrenos(terrenos, argv[1]);
@@ -352,6 +353,11 @@ int main(int argc, char *argv[]) {
         case 0:    
             salvarTerrenos(terrenos, "terrenos.txt");
             printf("Saindo...\n");
+
+            for (int i = 0; i < MAX_TERRENOS; i++) {
+               free(terrenos[i]);
+            }
+
             return 0;
         default:
             printf("Opcao invalida!\n");
@@ -359,5 +365,9 @@ int main(int argc, char *argv[]) {
         }
     }
     
+    for (int i = 0; i < MAX_TERRENOS; i++) {
+       free(terrenos[i]);
+    }
+
     return 0;
 }
